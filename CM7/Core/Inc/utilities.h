@@ -9,6 +9,6 @@
 
 #define CONVERSION_CMD           0x0A
 #define CONVERSION_TIME_MS       20
-#define K_FACTOR                 64
+#define K_FACTOR                 16
 
 HAL_StatusTypeDef readPressureSensor(I2C_HandleTypeDef hi2c, float* pressure);

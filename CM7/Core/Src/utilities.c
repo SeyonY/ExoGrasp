@@ -15,7 +15,7 @@ HAL_StatusTypeDef readPressureSensor(I2C_HandleTypeDef hi2c, float* pressure) {
 	osDelay(CONVERSION_TIME_MS);
 
 	// Read in data from pressure registers
-	status = HAL_I2C_Mem_Read(&hi2c, XGZP6857D_I2C_ADDR, REG_PRESSURE_MSB, I2C_MEMADD_SIZE_8BIT, &buf, 3, 100);
+	status = HAL_I2C_Mem_Read(&hi2c, XGZP6857D_I2C_ADDR, REG_PRESSURE_MSB, I2C_MEMADD_SIZE_8BIT, buf, 3, 100);
 	if (status != HAL_OK) {
 		return status;
 	}
