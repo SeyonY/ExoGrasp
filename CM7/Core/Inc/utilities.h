@@ -12,3 +12,5 @@
 #define K_FACTOR                 16
 
 HAL_StatusTypeDef readPressureSensor(I2C_HandleTypeDef hi2c, float* pressure);
+
+void Process_ADC_Data(ADC_HandleTypeDef hadc1, uint16_t *adc_buffer[TOTAL_SAMPLES], uint16_t *sensor_averages[NUM_ADC_CHANNELS]);
