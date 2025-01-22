@@ -59,12 +59,12 @@ UART_HandleTypeDef huart3;
 osThreadId_t mainTaskHandle;
 const osThreadAttr_t mainTask_attributes = {
   .name = "mainTask",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
-uint16_t adc_buffer[TOTAL_SAMPLES]; // Circular buffer for ADC data
-uint16_t sensor_averages[NUM_ADC_CHANNELS];
+uint32_t adc_buffer[TOTAL_SAMPLES]; // Circular buffer for ADC data
+uint32_t sensor_averages[NUM_ADC_CHANNELS];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -558,6 +558,7 @@ void StartMainTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
   float pressure = 0.0f;
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adc_buffer, TOTAL_SAMPLES);
   /* Infinite loop */
   for(;;)
   {
@@ -571,9 +572,9 @@ void StartMainTask(void *argument)
 //		sprintf(msg, "I2C read was not successful");
 //	}
 
-	Process_ADC_Data(hadc1, *adc_buffer, *sensor_averages);
+	Process_ADC_Data(hadc1, adc_buffer, sensor_averages);
 
-	sprintf(msg, "ADC 1: %i, 2: %i, 3: %i, 4: %i",
+	sprintf(msg, "ADC 1: %ld, 2: %ld, 3: %ld, 4: %ld\n",
 			sensor_averages[0], sensor_averages[1],
 			sensor_averages[2], sensor_averages[3]);
 
