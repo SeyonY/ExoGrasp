@@ -329,6 +329,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_5;
   sConfig.Rank = ADC_REGULAR_RANK_2;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -337,6 +338,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_10;
   sConfig.Rank = ADC_REGULAR_RANK_3;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -345,6 +347,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_15;
   sConfig.Rank = ADC_REGULAR_RANK_4;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -597,13 +600,14 @@ void StartMainTask(void *argument)
 //		sprintf(msg, "I2C read was not successful");
 //	}
 
-	Process_ADC_Data(hadc1, adc_buffer, sensor_averages);
+	Process_ADC_Data(&hadc1, adc_buffer, sensor_averages);
 
 	sprintf(msg, "ADC 1: %ld, 2: %ld, 3: %ld, 4: %ld\n",
 			sensor_averages[0], sensor_averages[1],
 			sensor_averages[2], sensor_averages[3]);
 
 	HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
+
 	osDelay(50);
   }
   /* USER CODE END 5 */

@@ -32,14 +32,14 @@ HAL_StatusTypeDef readPressureSensor(I2C_HandleTypeDef hi2c, float* pressure) {
 	return status;
 }
 
-void Process_ADC_Data(ADC_HandleTypeDef hadc1, uint32_t* adc_buffer, uint32_t* sensor_averages)
+void Process_ADC_Data(ADC_HandleTypeDef* hadc1, uint32_t* adc_buffer, uint32_t* sensor_averages)
 {
     uint32_t current_pos;
     uint32_t sensor_sums[NUM_ADC_CHANNELS] = {0}; // To store sums for each channel
     uint32_t total_samples_per_channel = SAMPLES_PER_CHANNEL;
 
     // Get the current DMA index (how many transfers are left)
-    current_pos = TOTAL_SAMPLES - __HAL_DMA_GET_COUNTER(hadc1.DMA_Handle);
+    current_pos = TOTAL_SAMPLES - __HAL_DMA_GET_COUNTER(hadc1->DMA_Handle);
 
     // Traverse the last 50ms worth of data in the circular buffer
     for (uint32_t i = 0; i < total_samples_per_channel; i++)

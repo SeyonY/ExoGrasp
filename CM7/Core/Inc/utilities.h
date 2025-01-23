@@ -13,4 +13,4 @@
 
 HAL_StatusTypeDef readPressureSensor(I2C_HandleTypeDef hi2c, float* pressure);
 
-void Process_ADC_Data(ADC_HandleTypeDef hadc1, uint32_t* adc_buffer, uint32_t* sensor_averages);
+void Process_ADC_Data(ADC_HandleTypeDef* hadc1, uint32_t* adc_buffer, uint32_t* sensor_averages);
