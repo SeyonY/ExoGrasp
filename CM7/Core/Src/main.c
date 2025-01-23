@@ -63,8 +63,8 @@ const osThreadAttr_t mainTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
-uint32_t adc_buffer[TOTAL_SAMPLES]; // Circular buffer for ADC data
-uint32_t sensor_averages[NUM_ADC_CHANNELS];
+uint16_t adc_buffer[TOTAL_SAMPLES]; // Circular buffer for ADC data
+uint16_t sensor_averages[NUM_ADC_CHANNELS];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -290,7 +290,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc1.Init.LowPowerAutoWait = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.NbrOfConversion = 4;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIG_T3_TRGO;
@@ -584,13 +584,13 @@ static void MX_GPIO_Init(void)
 void StartMainTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-  float pressure = 0.0f;
+//  float pressure = 0.0f;
+	char msg[128];
   HAL_TIM_Base_Start(&htim3);
-  HAL_ADC_Start_DMA(&hadc1, adc_buffer, TOTAL_SAMPLES);
+  HAL_ADC_Start_DMA(&hadc1, *adc_buffer, TOTAL_SAMPLES);
   /* Infinite loop */
   for(;;)
   {
-	char msg[64];
 //	if(readPressureSensor(hi2c1, &pressure) == HAL_OK) {
 //		// convert to kPa
 //		pressure = pressure/1000.0;
@@ -600,7 +600,7 @@ void StartMainTask(void *argument)
 //		sprintf(msg, "I2C read was not successful");
 //	}
 
-	Process_ADC_Data(&hadc1, adc_buffer, sensor_averages);
+	Process_ADC_Data(&hadc1, *adc_buffer, sensor_averages);
 
 	sprintf(msg, "ADC 1: %ld, 2: %ld, 3: %ld, 4: %ld\n",
 			sensor_averages[0], sensor_averages[1],
