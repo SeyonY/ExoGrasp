@@ -60,7 +60,7 @@ DMA_HandleTypeDef hdma_usart3_tx;
 osThreadId_t mainTaskHandle;
 const osThreadAttr_t mainTask_attributes = {
   .name = "mainTask",
-  .stack_size = 256 * 4,
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
@@ -615,7 +615,7 @@ void StartMainTask(void *argument)
 
 //	HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
 
-	osDelay(50);
+	osDelay(25);
   }
   /* USER CODE END 5 */
 }
