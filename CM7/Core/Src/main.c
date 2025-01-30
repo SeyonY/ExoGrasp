@@ -54,6 +54,7 @@ I2C_HandleTypeDef hi2c1;
 TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart3;
+DMA_HandleTypeDef hdma_usart3_tx;
 
 /* Definitions for mainTask */
 osThreadId_t mainTaskHandle;
@@ -516,6 +517,9 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream0_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
+  /* DMA1_Stream1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
 
 }
 
@@ -603,11 +607,13 @@ void StartMainTask(void *argument)
 
 	Process_ADC_Data(&hadc1, *adc_buffer, sensor_averages);
 
-	sprintf(msg, "ADC 1: %ld, 2: %ld, 3: %ld, 4: %ld\n",
-			sensor_averages[0], sensor_averages[1],
-			sensor_averages[2], sensor_averages[3]);
+	HAL_UART_Transmit_DMA(&huart3, (uint8_t*)adc_buffer, 200 * 2);
 
-	HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
+//	sprintf(msg, "ADC 1: %ld, 2: %ld, 3: %ld, 4: %ld\n",
+//			sensor_averages[0], sensor_averages[1],
+//			sensor_averages[2], sensor_averages[3]);
+
+//	HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
 
 	osDelay(50);
   }

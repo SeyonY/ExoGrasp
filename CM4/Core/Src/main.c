@@ -47,6 +47,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 UART_HandleTypeDef huart3;
+DMA_HandleTypeDef hdma_usart3_tx;
 
 /* Definitions for mainTask */
 osThreadId_t mainTaskHandle;
