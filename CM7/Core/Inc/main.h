@@ -62,7 +62,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 #define NUM_ADC_CHANNELS 4
 #define SAMPLES_PER_CHANNEL 50
-#define TOTAL_SAMPLES (NUM_ADC_CHANNELS * SAMPLES_PER_CHANNEL)
+#define TOTAL_SAMPLES 4
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
