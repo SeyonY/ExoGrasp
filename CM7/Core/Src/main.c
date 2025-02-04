@@ -64,8 +64,9 @@ const osThreadAttr_t mainTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
-volatile uint16_t adc_buffer[200]; // Circular buffer for ADC data
+volatile uint16_t adc_buffer[800]; // Circular buffer for ADC data
 volatile uint16_t sensor_averages[NUM_ADC_CHANNELS];
+char msg[128];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -430,9 +431,9 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 6399;
+  htim3.Init.Prescaler = 63999;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 9;
+  htim3.Init.Period = 9999;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -472,7 +473,7 @@ static void MX_USART3_UART_Init(void)
 
   /* USER CODE END USART3_Init 1 */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
+  huart3.Init.BaudRate = 921600;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -578,7 +579,18 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
+    if (hadc->Instance == ADC1) {
+        // Process the ADC data, e.g., compute the average of each channel
+    	sprintf(msg, "(%ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld)\n",
+    				adc_buffer[0], adc_buffer[1],
+    				adc_buffer[2], adc_buffer[3],
+    				adc_buffer[296], adc_buffer[497],
+    				adc_buffer[698], adc_buffer[799]);
 
+    	HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
+    }
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartMainTask */
@@ -605,17 +617,19 @@ void StartMainTask(void *argument)
 //		sprintf(msg, "I2C read was not successful");
 //	}
 
-	Process_ADC_Data(&hadc1, *adc_buffer, sensor_averages);
+//	Process_ADC_Data(&hadc1, *adc_buffer, sensor_averages);
 
-	HAL_UART_Transmit_DMA(&huart3, (uint8_t*)adc_buffer, 200 * 2);
+//	HAL_UART_Transmit_DMA(&huart3, (uint8_t*)adc_buffer, 800 * 2);
 
-//	sprintf(msg, "ADC 1: %ld, 2: %ld, 3: %ld, 4: %ld\n",
-//			sensor_averages[0], sensor_averages[1],
-//			sensor_averages[2], sensor_averages[3]);
-
+//	sprintf(msg, "(%ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld)\n",
+//			adc_buffer[0], adc_buffer[1],
+//			adc_buffer[2], adc_buffer[3],
+//			adc_buffer[296], adc_buffer[497],
+//			adc_buffer[698], adc_buffer[799]);
+//
 //	HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
 
-	osDelay(25);
+	osDelay(50);
   }
   /* USER CODE END 5 */
 }
