@@ -54,17 +54,20 @@ I2C_HandleTypeDef hi2c1;
 TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart3;
+DMA_HandleTypeDef hdma_usart3_tx;
 
 /* Definitions for mainTask */
 osThreadId_t mainTaskHandle;
 const osThreadAttr_t mainTask_attributes = {
   .name = "mainTask",
-  .stack_size = 256 * 4,
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
-volatile uint16_t adc_buffer[200]; // Circular buffer for ADC data
+volatile uint16_t adc_buffer[TOTAL_SAMPLES]; // Circular buffer for ADC data
+volatile uint16_t currentBufferIndex = 0;
 volatile uint16_t sensor_averages[NUM_ADC_CHANNELS];
+char msg[128];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -152,8 +155,8 @@ Error_Handler();
   /* USER CODE BEGIN 2 */
 //  HAL_DMA_Init(&hdma_adc1);
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED);
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t *) adc_buffer, TOTAL_SAMPLES);
   HAL_TIM_Base_Start(&htim3);
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&adc_buffer[currentBufferIndex], TOTAL_SAMPLES);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -293,7 +296,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   hadc1.Init.LowPowerAutoWait = DISABLE;
-  hadc1.Init.ContinuousConvMode = ENABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
   hadc1.Init.NbrOfConversion = 4;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIG_T3_TRGO;
@@ -471,7 +474,7 @@ static void MX_USART3_UART_Init(void)
 
   /* USER CODE END USART3_Init 1 */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
+  huart3.Init.BaudRate = 921600;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -516,6 +519,9 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream0_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
+  /* DMA1_Stream1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
 
 }
 
@@ -574,7 +580,21 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
+//    if (hadc->Instance == ADC1) {
+//        // Increment the index by the number of channels converted (i.e., 4)
+//        currentBufferIndex += NUM_ADC_CHANNELS;
+//
+//        // Optionally, stop if the buffer is full, or wrap around if you want to repeat.
+//        if (currentBufferIndex >= TOTAL_SAMPLES)
+//        {
+//            currentBufferIndex = 0;
+//        }
+//
+//        // Start the next DMA transfer for the next 4 samples
+//        HAL_ADC_Start_DMA(hadc, (uint32_t *)&adc_buffer + currentBufferIndex, NUM_ADC_CHANNELS);
+//    }
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartMainTask */
@@ -601,13 +621,17 @@ void StartMainTask(void *argument)
 //		sprintf(msg, "I2C read was not successful");
 //	}
 
-	Process_ADC_Data(&hadc1, *adc_buffer, sensor_averages);
+//	Process_ADC_Data(&hadc1, *adc_buffer, sensor_averages);
 
-	sprintf(msg, "ADC 1: %ld, 2: %ld, 3: %ld, 4: %ld\n",
-			sensor_averages[0], sensor_averages[1],
-			sensor_averages[2], sensor_averages[3]);
+//	HAL_UART_Transmit_DMA(&huart3, (uint8_t*)adc_buffer, 800 * 2);
 
-	HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
+//	sprintf(msg, "(%ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld)\n",
+//			adc_buffer[0], adc_buffer[1],
+//			adc_buffer[2], adc_buffer[3],
+//			adc_buffer[296], adc_buffer[497],
+//			adc_buffer[698], adc_buffer[799]);
+//
+//	HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
 
 	osDelay(50);
   }
