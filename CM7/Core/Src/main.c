@@ -68,6 +68,7 @@ volatile uint16_t adc_buffer[TOTAL_SAMPLES]; // Circular buffer for ADC data
 volatile uint16_t currentBufferIndex = 0;
 volatile uint16_t sensor_averages[NUM_ADC_CHANNELS];
 char msg[128];
+uint32_t dma_position = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -434,7 +435,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 6399;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 9;
+  htim3.Init.Period = 999;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -598,7 +599,9 @@ void StartMainTask(void *argument)
   for(;;)
   {
 //	readPressureSensor(hi2c1, &pressure) == HAL_OK)
-//	Process_ADC_Data(&hadc1, *adc_buffer, sensor_averages);
+	Process_ADC_Data(*adc_buffer, sensor_averages);
+
+	dma_position = get_dma_position(hdma_adc1);
 
 	osDelay(50);
   }
