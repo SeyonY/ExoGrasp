@@ -580,21 +580,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
-//    if (hadc->Instance == ADC1) {
-//        // Increment the index by the number of channels converted (i.e., 4)
-//        currentBufferIndex += NUM_ADC_CHANNELS;
-//
-//        // Optionally, stop if the buffer is full, or wrap around if you want to repeat.
-//        if (currentBufferIndex >= TOTAL_SAMPLES)
-//        {
-//            currentBufferIndex = 0;
-//        }
-//
-//        // Start the next DMA transfer for the next 4 samples
-//        HAL_ADC_Start_DMA(hadc, (uint32_t *)&adc_buffer + currentBufferIndex, NUM_ADC_CHANNELS);
-//    }
-}
+
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartMainTask */
@@ -608,30 +594,11 @@ void StartMainTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
 //  float pressure = 0.0f;
-	char msg[128];
   /* Infinite loop */
   for(;;)
   {
-//	if(readPressureSensor(hi2c1, &pressure) == HAL_OK) {
-//		// convert to kPa
-//		pressure = pressure/1000.0;
-//		sprintf(msg, "Pressure: %.2f kPa", pressure);
-//	}
-//	else {
-//		sprintf(msg, "I2C read was not successful");
-//	}
-
+//	readPressureSensor(hi2c1, &pressure) == HAL_OK)
 //	Process_ADC_Data(&hadc1, *adc_buffer, sensor_averages);
-
-//	HAL_UART_Transmit_DMA(&huart3, (uint8_t*)adc_buffer, 800 * 2);
-
-//	sprintf(msg, "(%ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld)\n",
-//			adc_buffer[0], adc_buffer[1],
-//			adc_buffer[2], adc_buffer[3],
-//			adc_buffer[296], adc_buffer[497],
-//			adc_buffer[698], adc_buffer[799]);
-//
-//	HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
 
 	osDelay(50);
   }
