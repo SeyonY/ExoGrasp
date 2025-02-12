@@ -37,15 +37,16 @@ void Process_ADC_Data(uint16_t* adc_buffer, uint16_t* sensor_averages)
     uint32_t sensor_sums[NUM_ADC_CHANNELS] = {0}; // To store sums for each channel
 
     // Traverse the last 50ms worth of data in the circular buffer
-    for (uint32_t i = 0; i < TOTAL_SAMPLES; i++)
+    for (uint16_t i = 0; i < TOTAL_SAMPLES; i++)
     {
 		// Calculate the buffer index for each sample and channel
     	int channel = i % 4;
-		sensor_sums[channel] += adc_buffer[i];
+    	uint16_t adc_value = adc_buffer[i];
+		sensor_sums[channel] += adc_value;
     }
 
     // Calculate averages for each channel
-    for (uint32_t channel = 0; channel < NUM_ADC_CHANNELS; channel++)
+    for (uint16_t channel = 0; channel < NUM_ADC_CHANNELS; channel++)
     {
         sensor_averages[channel] = sensor_sums[channel] / SAMPLES_PER_CHANNEL;
     }
