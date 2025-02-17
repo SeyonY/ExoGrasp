@@ -599,7 +599,7 @@ void StartMainTask(void *argument)
   for(;;)
   {
 //	readPressureSensor(hi2c1, &pressure) == HAL_OK)
-	Process_ADC_Data(*adc_buffer, sensor_averages);
+	Process_ADC_Data(adc_buffer, sensor_averages);
 
 	dma_position = get_dma_position(hdma_adc1);
 
