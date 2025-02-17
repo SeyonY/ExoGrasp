@@ -58,11 +58,25 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define THUMB_Pin GPIO_PIN_4
+#define THUMB_GPIO_Port GPIOD
+#define INDEX_Pin GPIO_PIN_5
+#define INDEX_GPIO_Port GPIOD
+#define OTHER_SOL_Pin GPIO_PIN_6
+#define OTHER_SOL_GPIO_Port GPIOD
+#define PUMP_Pin GPIO_PIN_7
+#define PUMP_GPIO_Port GPIOD
 
 /* USER CODE BEGIN Private defines */
 #define NUM_ADC_CHANNELS 4
 #define SAMPLES_PER_CHANNEL 200
 #define TOTAL_SAMPLES (NUM_ADC_CHANNELS * SAMPLES_PER_CHANNEL)
+
+typedef enum {
+	OPEN=0,
+	CLOSED
+} handState_t;
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
