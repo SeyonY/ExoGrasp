@@ -63,12 +63,28 @@ const osThreadAttr_t mainTask_attributes = {
   .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for controllerTask */
+osThreadId_t controllerTaskHandle;
+const osThreadAttr_t controllerTask_attributes = {
+  .name = "controllerTask",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for predictionTask */
+osThreadId_t predictionTaskHandle;
+const osThreadAttr_t predictionTask_attributes = {
+  .name = "predictionTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE BEGIN PV */
 volatile uint16_t adc_buffer[TOTAL_SAMPLES]; // Circular buffer for ADC data
 volatile uint16_t currentBufferIndex = 0;
 volatile uint16_t sensor_averages[NUM_ADC_CHANNELS];
 char msg[128];
 uint32_t dma_position = 0;
+float pressure = 0.0f;
+handState_t state = OPEN;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -80,6 +96,8 @@ static void MX_I2C1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
 void StartMainTask(void *argument);
+void startControllerTask(void *argument);
+void startPredictionTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -182,6 +200,12 @@ Error_Handler();
   /* Create the thread(s) */
   /* creation of mainTask */
   mainTaskHandle = osThreadNew(StartMainTask, NULL, &mainTask_attributes);
+
+  /* creation of controllerTask */
+  controllerTaskHandle = osThreadNew(startControllerTask, NULL, &controllerTask_attributes);
+
+  /* creation of predictionTask */
+  predictionTaskHandle = osThreadNew(startPredictionTask, NULL, &predictionTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -544,6 +568,9 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOG_CLK_ENABLE();
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, THUMB_Pin|INDEX_Pin|OTHER_SOL_Pin|PUMP_Pin, GPIO_PIN_RESET);
+
   /*Configure GPIO pins : PC1 PC4 PC5 */
   GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -567,6 +594,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : THUMB_Pin INDEX_Pin OTHER_SOL_Pin PUMP_Pin */
+  GPIO_InitStruct.Pin = THUMB_Pin|INDEX_Pin|OTHER_SOL_Pin|PUMP_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PG11 PG13 */
   GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_13;
@@ -594,11 +628,10 @@ static void MX_GPIO_Init(void)
 void StartMainTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-//  float pressure = 0.0f;
   /* Infinite loop */
   for(;;)
   {
-//	readPressureSensor(hi2c1, &pressure) == HAL_OK)
+	readPressureSensor(hi2c1, &pressure);
 	Process_ADC_Data(adc_buffer, sensor_averages);
 
 	dma_position = get_dma_position(hdma_adc1);
@@ -606,6 +639,49 @@ void StartMainTask(void *argument)
 	osDelay(50);
   }
   /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_startControllerTask */
+/**
+* @brief Function implementing the controllerTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_startControllerTask */
+void startControllerTask(void *argument)
+{
+  /* USER CODE BEGIN startControllerTask */
+  float p = 110.0;
+  float target = 120.0;
+  /* Infinite loop */
+  for(;;)
+  {
+	pressureController(&p, target, state);
+    osDelay(25);
+  }
+  /* USER CODE END startControllerTask */
+}
+
+/* USER CODE BEGIN Header_startPredictionTask */
+/**
+* @brief Function implementing the predictionTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_startPredictionTask */
+void startPredictionTask(void *argument)
+{
+  /* USER CODE BEGIN startPredictionTask */
+  /* Infinite loop */
+  for(;;)
+  {
+	if (sensor_averages[0] < 10)
+		state = CLOSED;
+	else
+		state = OPEN;
+    osDelay(10);
+  }
+  /* USER CODE END startPredictionTask */
 }
 
 /**
