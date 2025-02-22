@@ -3,15 +3,15 @@ import struct
 import time
 import csv
 
-SERIAL_PORT = "COM3"         # Update as needed
-BAUD_RATE = 230400
+SERIAL_PORT = "COM4"         # Update as needed
+BAUD_RATE = 921600
 DATA_SIZE = 4                # Number of uint16_t values per read
 BYTES_TO_READ = DATA_SIZE * 2
 SAVE_FILE = "emg_data.csv"
 
 # Time intervals
-TOGGLE_INTERVAL = 5.0        # Seconds between toggles
-INITIAL_WAIT = 10.0          # Seconds before data collection starts
+TOGGLE_INTERVAL = 2.0        # Seconds between toggles
+INITIAL_WAIT = 1.0          # Seconds before data collection starts
 
 def toggle_hand_state(current_state):
     """Toggle hand state between 'Open' and 'Closed'."""
@@ -42,10 +42,9 @@ def main():
         try:
             while True:
                 # Read the bytes from serial (4 * 2 bytes = 8 total)
-                raw_data = ser.read(BYTES_TO_READ)
-
-                if len(raw_data) == BYTES_TO_READ:
-                    data_array = struct.unpack('<{}H'.format(DATA_SIZE), raw_data)
+                line = ser.readline().decode('utf-8', errors='ignore').strip()
+                data_array = line.split(",")  # Split by comma
+                if len(data_array) == 4:
 
                     current_time = time.time()
 

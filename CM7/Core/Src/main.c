@@ -66,6 +66,7 @@ const osThreadAttr_t mainTask_attributes = {
 /* USER CODE BEGIN PV */
 volatile uint16_t adc_buffer[4]; // Circular buffer for ADC data
 volatile uint16_t sensor_averages[NUM_ADC_CHANNELS];
+volatile char msg[128];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,7 +88,8 @@ void StartMainTask(void *argument);
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
 	if (hadc->Instance == ADC1) {
-		HAL_UART_Transmit_DMA(&huart3, (uint8_t*)adc_buffer, 4 * 2);
+		sprintf(msg, "%ld, %ld, %ld, %ld", adc_buffer[0], adc_buffer[1], adc_buffer[2], adc_buffer[3]);
+		HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
 	}
 }
 /* USER CODE END 0 */
@@ -477,7 +479,7 @@ static void MX_USART3_UART_Init(void)
 
   /* USER CODE END USART3_Init 1 */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 230400;
+  huart3.Init.BaudRate = 921600;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -597,7 +599,6 @@ void StartMainTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
 //  float pressure = 0.0f;
-  char msg[128];
   /* Infinite loop */
   for(;;)
   {
