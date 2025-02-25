@@ -628,13 +628,24 @@ static void MX_GPIO_Init(void)
 void StartMainTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
+  handState_t prev_hand_state = state;
+  char msg[128];
+  sprintf(msg, "Hello");
+  HAL_UART_Transmit(&huart3, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
   /* Infinite loop */
   for(;;)
   {
+	if (prev_hand_state != state) {
+		sprintf(msg, "State: %d/n", state);
+		HAL_UART_Transmit(&huart3, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+	}
+
 	readPressureSensor(hi2c1, &pressure);
 	Process_ADC_Data(adc_buffer, sensor_averages);
 
 	dma_position = get_dma_position(hdma_adc1);
+
+	prev_hand_state = state;
 
 	osDelay(50);
   }
@@ -675,7 +686,7 @@ void startPredictionTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	if (sensor_averages[0] < 10)
+	if (sensor_averages[0] < 9000)
 		state = CLOSED;
 	else
 		state = OPEN;
