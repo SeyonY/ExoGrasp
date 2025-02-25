@@ -64,9 +64,11 @@ const osThreadAttr_t mainTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
-volatile uint16_t adc_buffer[4]; // Circular buffer for ADC data
+volatile uint16_t adc_buffer[6]; // Circular buffer for ADC data
 volatile uint16_t sensor_averages[NUM_ADC_CHANNELS];
 volatile char msg[128];
+uint16_t adc_buff_bruh[5];
+uint16_t start_sequence[1];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -88,8 +90,10 @@ void StartMainTask(void *argument);
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
 	if (hadc->Instance == ADC1) {
-		sprintf(msg, "%ld, %ld, %ld, %ld", adc_buffer[0], adc_buffer[1], adc_buffer[2], adc_buffer[3]);
-		HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
+//		HAL_UART_Transmit_DMA(&huart3, (uint8_t*)start_sequence, 2);
+		HAL_UART_Transmit_DMA(&huart3, (uint8_t*)adc_buffer, 6 * 2);
+//		sprintf(msg, "%ld, %ld, %ld, %ld", adc_buffer[0], adc_buffer[1], adc_buffer[2], adc_buffer[3]);
+//		HAL_UART_Transmit(&huart3, msg, strlen(msg), HAL_MAX_DELAY);
 	}
 }
 /* USER CODE END 0 */
@@ -160,7 +164,7 @@ Error_Handler();
   /* USER CODE BEGIN 2 */
 //  HAL_DMA_Init(&hdma_adc1);
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED);
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t *) adc_buffer, TOTAL_SAMPLES);
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t *) adc_buffer + 1, TOTAL_SAMPLES);
   HAL_TIM_Base_Start(&htim3);
   /* USER CODE END 2 */
 
@@ -599,6 +603,16 @@ void StartMainTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
 //  float pressure = 0.0f;
+	adc_buff_bruh[0] = 65518;
+	adc_buff_bruh[1] = 65535;
+	adc_buff_bruh[2] = 32768;
+	adc_buff_bruh[3] = 32767;
+	adc_buff_bruh[4] = 32769;
+
+	start_sequence[0] = 65518;
+
+	adc_buffer[1] = 65518;
+
   /* Infinite loop */
   for(;;)
   {

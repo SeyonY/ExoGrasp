@@ -3,21 +3,35 @@ import struct
 import time
 import csv
 
-SERIAL_PORT = "COM4"         # Update as needed
+SERIAL_PORT = "COM6"         # Update as needed
 BAUD_RATE = 921600
 DATA_SIZE = 4                # Number of uint16_t values per read
 BYTES_TO_READ = DATA_SIZE * 2
 SAVE_FILE = "emg_data.csv"
 
 # Time intervals
-TOGGLE_INTERVAL = 2.0        # Seconds between toggles
-INITIAL_WAIT = 1.0          # Seconds before data collection starts
+TOGGLE_INTERVAL = 3.0        # Seconds between toggles
+INITIAL_WAIT = 1.0           # Seconds before data collection starts
+
+START_SEQUENCE = b'\xFF\xEE' # Start marker
 
 def toggle_hand_state(current_state):
     """Toggle hand state between 'Open' and 'Closed'."""
     new_state = "Closed" if current_state == "Open" else "Open"
     print(f"Hand state toggled to: {new_state}")
     return new_state
+
+def read_packet(ser):
+    """Reads a packet starting from a valid start sequence."""
+    while True:
+        # Read one byte at a time until we find the start sequence
+        byte = ser.read(1)
+        if byte == b'\xEE':  
+            next_byte = ser.read(1)
+            if next_byte == b'\xFF':  # Confirm second byte
+                data = ser.read(BYTES_TO_READ)
+                if len(data) == BYTES_TO_READ:
+                    return data  # Successfully read a full packet
 
 def main():
     # Initial wait before starting
@@ -41,10 +55,11 @@ def main():
 
         try:
             while True:
-                # Read the bytes from serial (4 * 2 bytes = 8 total)
-                line = ser.readline().decode('utf-8', errors='ignore').strip()
-                data_array = line.split(",")  # Split by comma
-                if len(data_array) == 4:
+                # Read data packet with start byte verification
+                raw_data = read_packet(ser)
+
+                if raw_data:
+                    data_array = struct.unpack('<{}H'.format(DATA_SIZE), raw_data)
 
                     current_time = time.time()
 
@@ -52,6 +67,7 @@ def main():
                     if current_time >= next_toggle_time:
                         hand_state = toggle_hand_state(hand_state)
                         next_toggle_time = current_time + TOGGLE_INTERVAL
+                        time.sleep(1)
 
                     # Write row to CSV
                     writer.writerow([
@@ -64,10 +80,10 @@ def main():
                     ])
 
                     # Print to console (optional debug)
-                    print(f"Time: {current_time:.2f}, "
-                        f"Ch1: {data_array[0]}, Ch2: {data_array[1]}, "
-                        f"Ch3: {data_array[2]}, Ch4: {data_array[3]} | "
-                        f"Hand: {hand_state}")
+                    # print(f"Hand: {hand_state}, "
+                    #     f"Time: {current_time:.2f}, "
+                    #     f"Ch1: {data_array[0]}, Ch2: {data_array[1]}, "
+                    #     f"Ch3: {data_array[2]}, Ch4: {data_array[3]}")
 
         except KeyboardInterrupt:
             print("\nStopping data collection (KeyboardInterrupt).")
