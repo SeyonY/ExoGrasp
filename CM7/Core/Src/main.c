@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "app_x-cube-ai.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -122,6 +123,14 @@ int main(void)
   int32_t timeout;
 /* USER CODE END Boot_Mode_Sequence_0 */
 
+  /* Enable the CPU Cache */
+
+  /* Enable I-Cache---------------------------------------------------------*/
+  SCB_EnableICache();
+
+  /* Enable D-Cache---------------------------------------------------------*/
+  SCB_EnableDCache();
+
 /* USER CODE BEGIN Boot_Mode_Sequence_1 */
   /* Wait until CPU2 boots and enters in stop mode or timeout*/
   timeout = 0xFFFF;
@@ -171,6 +180,7 @@ Error_Handler();
   MX_I2C1_Init();
   MX_ADC1_Init();
   MX_TIM3_Init();
+  MX_X_CUBE_AI_Init();
   /* USER CODE BEGIN 2 */
 //  HAL_DMA_Init(&hdma_adc1);
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED);
