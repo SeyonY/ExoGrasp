@@ -9,5 +9,5 @@
 #define INC_CONTROLLER_H_
 #include "main.h"
 
-void pressureController(float *pressure, float target_pressure, handState_t state);
+void pressureController(float *pressure, float *target_pressure, float *min_pressure, handState_t state);
 #endif /* INC_CONTROLLER_H_ */

@@ -2,7 +2,7 @@ import serial
 import struct
 
 # Serial port configuration
-SERIAL_PORT = "COM6"  # Replace with your actual port (e.g., "/dev/ttyUSB0" on Linux, "COM4" on Windows)
+SERIAL_PORT = "COM4"  # Replace with your actual port (e.g., "/dev/ttyUSB0" on Linux, "COM4" on Windows)
 BAUD_RATE = 921600
 DATA_SIZE = 800  # Number of uint16_t values
 BYTES_TO_READ = DATA_SIZE * 2  # 400 bytes per transmission

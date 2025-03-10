@@ -662,12 +662,12 @@ void StartMainTask(void *argument)
 void startControllerTask(void *argument)
 {
   /* USER CODE BEGIN startControllerTask */
-  float p = 110.0;
-  float target = 120.0;
+  float target = 119000.0;
+  float min_pressure = 110000.0;
   /* Infinite loop */
   for(;;)
   {
-	pressureController(&p, target, state);
+	pressureController(&pressure, &target, &min_pressure, state);
     osDelay(25);
   }
   /* USER CODE END startControllerTask */
