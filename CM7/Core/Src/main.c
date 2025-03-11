@@ -641,7 +641,7 @@ void StartMainTask(void *argument)
 	}
 
 	readPressureSensor(hi2c1, &pressure);
-	Process_ADC_Data(adc_buffer, sensor_averages);
+	Process_ADC_Data(adc_buffer, &sensor_averages);
 
 	dma_position = get_dma_position(hdma_adc1);
 
@@ -686,7 +686,7 @@ void startPredictionTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	if (sensor_averages[0] < 9000)
+	if (sensor_averages[0] > 9000)
 		state = CLOSED;
 	else
 		state = OPEN;
