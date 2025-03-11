@@ -598,7 +598,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pins : THUMB_Pin INDEX_Pin OTHER_SOL_Pin PUMP_Pin */
   GPIO_InitStruct.Pin = THUMB_Pin|INDEX_Pin|OTHER_SOL_Pin|PUMP_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
@@ -686,7 +686,7 @@ void startPredictionTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	if (sensor_averages[0] > 9000)
+	if (sensor_averages[0] > 12000)
 		state = CLOSED;
 	else
 		state = OPEN;
