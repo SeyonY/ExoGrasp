@@ -83,7 +83,7 @@ volatile uint16_t currentBufferIndex = 0;
 volatile uint16_t sensor_averages[NUM_ADC_CHANNELS];
 char msg[128];
 uint32_t dma_position = 0;
-float pressure = 0.0f;
+volatile float pressure = 0.0f;
 handState_t state = OPEN;
 /* USER CODE END PV */
 
@@ -632,6 +632,8 @@ void StartMainTask(void *argument)
   char msg[128];
   sprintf(msg, "Hello");
   HAL_UART_Transmit(&huart3, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+  HAL_StatusTypeDef status = HAL_OK;
+  int restart_count = 0;
   /* Infinite loop */
   for(;;)
   {
@@ -640,7 +642,14 @@ void StartMainTask(void *argument)
 		HAL_UART_Transmit(&huart3, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
 	}
 
-	readPressureSensor(hi2c1, &pressure);
+	status = readPressureSensor(hi2c1, &pressure);
+
+//	if (status != HAL_OK) {
+//		HAL_I2C_DeInit(&hi2c1);
+//		HAL_I2C_Init(&hi2c1);
+//		restart_count++;
+//	}
+
 	Process_ADC_Data(adc_buffer, &sensor_averages);
 
 	dma_position = get_dma_position(hdma_adc1);
@@ -662,7 +671,7 @@ void StartMainTask(void *argument)
 void startControllerTask(void *argument)
 {
   /* USER CODE BEGIN startControllerTask */
-  float target = 119000.0;
+  float target = 115000.0;
   float min_pressure = 110000.0;
   /* Infinite loop */
   for(;;)
@@ -686,7 +695,7 @@ void startPredictionTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	if (sensor_averages[0] > 12000)
+	if (sensor_averages[0] > 9000)
 		state = CLOSED;
 	else
 		state = OPEN;
