@@ -694,14 +694,20 @@ void startPredictionTask(void *argument)
 {
   /* USER CODE BEGIN startPredictionTask */
   /* Infinite loop */
-  for(;;)
+	/*for(;;)
   {
 	if (sensor_averages[0] < 9000)
 		state = CLOSED;
 	else
 		state = OPEN;
     osDelay(10);
-  }
+  }*/
+	for(;;)
+	{
+		MX_X_CUBE_AI_Process();
+		osDelay(50);
+	}
+
   /* USER CODE END startPredictionTask */
 }
 

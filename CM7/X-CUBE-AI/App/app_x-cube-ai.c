@@ -172,6 +172,63 @@ static int ai_run(void)
 }
 
 /* USER CODE BEGIN 2 */
+/* --- Feature Extraction Helper Functions --- */
+static double compute_mean(uint32_t *data, int n) {
+  double sum = 0.0;
+  for (int i = 0; i < n; i++) {
+    sum += data[i];
+  }
+  return sum / n;
+}
+
+static double compute_variance(uint32_t *data, int n, double mean) {
+  double sum_sq = 0.0;
+  for (int i = 0; i < n; i++) {
+    double diff = data[i] - mean;
+    sum_sq += diff * diff;
+  }
+  return sum_sq / n;
+}
+
+static double compute_rms(uint32_t *data, int n) {
+  double sum_sq = 0.0;
+  for (int i = 0; i < n; i++) {
+    sum_sq += data[i] * data[i];
+  }
+  return sqrt(sum_sq / n);
+}
+
+static double compute_waveform_length(uint32_t *data, int n) {
+  double wl = 0.0;
+  for (int i = 1; i < n; i++) {
+    wl += fabs((double)data[i] - (double)data[i-1]);
+  }
+  return wl;
+}
+
+static int compute_slope_sign_changes(uint32_t *data, int n) {
+  int count = 0;
+  if (n < 3)
+    return 0;
+  int d_prev = (int)data[1] - (int)data[0];
+  for (int i = 1; i < n - 1; i++) {
+    int d = (int)data[i+1] - (int)data[i];
+    if (d_prev * d < 0)
+      count++;
+    d_prev = d;
+  }
+  return count;
+}
+
+static double compute_mean_absolute_value(uint32_t *data, int n) {
+  double sum = 0.0;
+  for (int i = 0; i < n; i++) {
+    sum += fabs((double)data[i]);
+  }
+  return sum / n;
+}
+
+/* --- Acquire ADC Data, Extract Features, and Fill the Input Buffer --- */
 int acquire_and_process_data(ai_i8* data[])
 {
   /* fill the inputs of the c-model
@@ -181,6 +238,69 @@ int acquire_and_process_data(ai_i8* data[])
   }
 
   */
+
+// Extract ADC values into two channels from adc_buffer (size 800).
+  // According to:
+  //  - adc_buffer[0], adc_buffer[4], adc_buffer[8], ... -> channel 1 (200 samples)
+  //  - adc_buffer[1], adc_buffer[5], adc_buffer[9], ... -> channel 2 (200 samples)
+  uint32_t adc_channel1[200];
+  uint32_t adc_channel2[200];
+  int idx1 = 0, idx2 = 0;
+  for (int i = 0; i < 800; i++) {
+	if ((i % 4) == 0 && idx1 < 200) {
+	  adc_channel1[idx1++] = adc_buffer[i];
+	} else if ((i % 4) == 1 && idx2 < 200) {
+	  adc_channel2[idx2++] = adc_buffer[i];
+	}
+
+  }
+  // is butterworth filter needed?
+
+  // Compute six time-domain features for channel 1.
+  double mean_ch1 = compute_mean(adc_channel1, 200);
+  double var_ch1  = compute_variance(adc_channel1, 200, mean_ch1);
+  double rms_ch1  = compute_rms(adc_channel1, 200);
+  double wl_ch1   = compute_waveform_length(adc_channel1, 200);
+  int    ssc_ch1  = compute_slope_sign_changes(adc_channel1, 200);
+  double mav_ch1  = compute_mean_absolute_value(adc_channel1, 200);
+
+  // Compute six time-domain features for channel 2.
+  double mean_ch2 = compute_mean(adc_channel2, 200);
+  double var_ch2  = compute_variance(adc_channel2, 200, mean_ch2);
+  double rms_ch2  = compute_rms(adc_channel2, 200);
+  double wl_ch2   = compute_waveform_length(adc_channel2, 200);
+  int    ssc_ch2  = compute_slope_sign_changes(adc_channel2, 200);
+  double mav_ch2  = compute_mean_absolute_value(adc_channel2, 200);
+
+  // Create a 12-dimensional feature vector.
+  double feature_vector[12];
+  feature_vector[0]  = mean_ch1;
+  feature_vector[1]  = var_ch1;
+  feature_vector[2]  = rms_ch1;
+  feature_vector[3]  = wl_ch1;
+  feature_vector[4]  = (double)ssc_ch1;
+  feature_vector[5]  = mav_ch1;
+  feature_vector[6]  = mean_ch2;
+  feature_vector[7]  = var_ch2;
+  feature_vector[8]  = rms_ch2;
+  feature_vector[9]  = wl_ch2;
+  feature_vector[10] = (double)ssc_ch2;
+  feature_vector[11] = mav_ch2;
+
+  double feature_mean[12] = {14083.489580, 1181289.672021, 14109.204677, 4821.640164, 12.109226, 14083.489580, 12961.410092, 1726933.886649, 12991.066218, 6410.065705, 13.928869, 12961.410092};
+  double feature_std[12] = {14487.636073, 6659637.014818, 14503.375841, 4027.220441, 3.414121, 14487.636073, 16950.591105, 19153639.885626, 16978.805106, 4678.975665, 2.954818, 16950.591105};
+
+  // Scaling factor to convert standardized values into the int8 range.
+  // For example, if the standardized features lie roughly in [-1, 1],
+  // multiplying by 128 maps them to the int8 range (-128 to 127).
+  double scale_factor = 128.0;
+
+  // Apply standardization and quantization. Then form 12-input vector.
+  for (int j = 0; j < 12; j++) {
+    double standardized = (feature_vector[j] - feature_mean[j]) / feature_std[j];
+    int8_t quantized = (int8_t)(standardized * scale_factor);
+    ((int8_t*)data_ins[0])[j] = quantized;
+  }
   return 0;
 }
 
@@ -193,6 +313,23 @@ int post_process(ai_i8* data[])
   }
 
   */
+  // When the network was converted from ONNX using STM32Cube.AI,
+  // it created two outputs: "output_label" and "output_probability."
+  // In the generated code, these outputs are assigned to data_outs[0] and data_outs[1] respectively.
+  // The label is stored in data_outs[0] as an int8_t.
+  int8_t predicted_label = *((int8_t*)data_outs[0]);
+
+  // Map the predicted label to the corresponding state.
+  if (predicted_label == 0) {
+	printf("Predicted State: open\r\n");
+	state = OPEN;
+  } else if (predicted_label == 1) {
+	printf("Predicted State: closed\r\n");
+	state = CLOSED;
+  } else {
+	printf("Predicted State: Unknown (label %d)\r\n", predicted_label);
+  }
+
   return 0;
 }
 /* USER CODE END 2 */
