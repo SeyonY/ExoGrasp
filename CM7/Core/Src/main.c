@@ -669,11 +669,23 @@ void startPredictionTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	if (sensor_averages[0] > 20000)
+	if (state == OPEN && sensor_averages[0] > 2000) {
 		state = CLOSED;
-	else
+		osDelay(8000);
+		state = PUMP_OFF_CLOSED;
+		osDelay(2000);
+	}
+	else if (state == PUMP_OFF_CLOSED && sensor_averages[0] > 2000) {
+		state = CLOSED;
+		osDelay(2000);
+		state = PUMP_OFF_CLOSED;
+		osDelay(2000);
+	}
+	else if (state == PUMP_OFF_CLOSED && sensor_averages[0] <= 2000) {
 		state = OPEN;
-    osDelay(10);
+		osDelay(2000);
+	}
+    osDelay(50);
   }
   /* USER CODE END startPredictionTask */
 }

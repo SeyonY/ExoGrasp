@@ -74,6 +74,7 @@ void Error_Handler(void);
 
 typedef enum {
 	OPEN=0,
+	PUMP_OFF_CLOSED,
 	CLOSED
 } handState_t;
 
