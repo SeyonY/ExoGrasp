@@ -241,15 +241,15 @@ int acquire_and_process_data(ai_i8* data[])
 
 // Extract ADC values into two channels from adc_buffer (size 800).
   // According to:
-  //  - adc_buffer[0], adc_buffer[4], adc_buffer[8], ... -> channel 1 (200 samples)
-  //  - adc_buffer[1], adc_buffer[5], adc_buffer[9], ... -> channel 2 (200 samples)
+  //  - adc_buffer[0], adc_buffer[2], adc_buffer[4], ... -> channel 1 (200 samples)
+  //  - adc_buffer[1], adc_buffer[3], adc_buffer[5], ... -> channel 2 (200 samples)
   uint32_t adc_channel1[200];
   uint32_t adc_channel2[200];
   int idx1 = 0, idx2 = 0;
-  for (int i = 0; i < 800; i++) {
-	if ((i % 4) == 0 && idx1 < 200) {
+  for (int i = 0; i < 400; i++) {
+	if ((i % 2) == 0 && idx1 < 200) {
 	  adc_channel1[idx1++] = adc_buffer[i];
-	} else if ((i % 4) == 1 && idx2 < 200) {
+	} else if ((i % 2) == 1 && idx2 < 200) {
 	  adc_channel2[idx2++] = adc_buffer[i];
 	}
 
