@@ -58,6 +58,8 @@
 #include "network_data.h"
 
 /* USER CODE BEGIN includes */
+extern uint16_t adc_buffer[400];
+extern handState_t state;
 /* USER CODE END includes */
 
 /* IO buffers ----------------------------------------------------------------*/

@@ -1,18 +1,18 @@
 ST Edge AI Core v2.0.0-20049
-Created date          : 2025-03-09 15:49:08
-Parameters            : generate --target stm32h7 --name network -m C:/Users/Daniel/Documents/ExoGrasp/ExoGrasp/mlp_classifier.onnx --compression none --verbosity 1 --workspace C:/Users/Daniel/AppData/Local/Temp/mxAI_workspace2534504939716009782330689077914714 --output C:/Users/Daniel/.stm32cubemx/network_output
+Created date          : 2025-03-18 12:52:36
+Parameters            : generate --target stm32h7 --name network -m D:/GitHub/ExoGrasp/mlp_classifier.onnx --compression none --verbosity 1 --workspace C:/Users/relja/AppData/Local/Temp/mxAI_workspace31979291784680015731446737116915735 --output C:/Users/relja/.stm32cubemx/network_output
 
 Exec/report summary (generate)
 -------------------------------------------------------------------------------------------------------------
-model file         :   C:\Users\Daniel\Documents\ExoGrasp\ExoGrasp\mlp_classifier.onnx                       
+model file         :   D:\GitHub\ExoGrasp\mlp_classifier.onnx                                                
 type               :   onnx                                                                                  
 c_name             :   network                                                                               
 compression        :   none                                                                                  
 options            :   allocate-inputs, allocate-outputs                                                     
 optimization       :   balanced                                                                              
 target/series      :   stm32h7                                                                               
-workspace dir      :   C:\Users\Daniel\AppData\Local\Temp\mxAI_workspace2534504939716009782330689077914714   
-output dir         :   C:\Users\Daniel\.stm32cubemx\network_output                                           
+workspace dir      :   C:\Users\relja\AppData\Local\Temp\mxAI_workspace31979291784680015731446737116915735   
+output dir         :   C:\Users\relja\.stm32cubemx\network_output                                            
 model_fmt          :   float                                                                                 
 model_name         :   mlp_classifier                                                                        
 model_hash         :   0xd0e1938bb01cb64fa1ca6503aeafebc9                                                    
@@ -248,17 +248,17 @@ macc=10,194 weights=39,956 act=768 ram_io=0
  module                             text   rodata    data     bss 
  ------------------------------ -------- -------- ------- ------- 
  NetworkRuntime1000_CM7_GCC.a     27,392        0       0       0 
- network.o                           700      104   3,148     252 
+ network.o                           698      104   3,148     252 
  network_data.o                       48       16      88       0 
  lib (toolchain)*                    858      328       0       0 
  ------------------------------ -------- -------- ------- ------- 
- RT total**                       28,998      448   3,236     252 
+ RT total**                       28,996      448   3,236     252 
  ------------------------------ -------- -------- ------- ------- 
  weights                               0   39,960       0       0 
  activations                           0        0       0     768 
  io                                    0        0       0       0 
  ------------------------------ -------- -------- ------- ------- 
- TOTAL                            28,998   40,408   3,236   1,020 
+ TOTAL                            28,996   40,408   3,236   1,020 
  ------------------------------ -------- -------- ------- ------- 
  *  toolchain objects (libm/libgcc*)
  ** RT AI runtime objects (kernels+infrastructure)
@@ -267,19 +267,19 @@ macc=10,194 weights=39,956 act=768 ram_io=0
   ---------------------------------------------------
                FLASH (ro)      %*   RAM (rw)       % 
   ---------------------------------------------------
-  RT total         32,682   45.0%      3,488   82.0% 
+  RT total         32,680   45.0%      3,488   82.0% 
   ---------------------------------------------------
-  TOTAL            72,642              4,256         
+  TOTAL            72,640              4,256         
   ---------------------------------------------------
   *  rt/total
 
 
 Generated files (7)
-------------------------------------------------------------------- 
-C:\Users\Daniel\.stm32cubemx\network_output\network_data_params.h   
-C:\Users\Daniel\.stm32cubemx\network_output\network_data_params.c   
-C:\Users\Daniel\.stm32cubemx\network_output\network_data.h          
-C:\Users\Daniel\.stm32cubemx\network_output\network_data.c          
-C:\Users\Daniel\.stm32cubemx\network_output\network_config.h        
-C:\Users\Daniel\.stm32cubemx\network_output\network.h               
-C:\Users\Daniel\.stm32cubemx\network_output\network.c               
+------------------------------------------------------------------ 
+C:\Users\relja\.stm32cubemx\network_output\network_data_params.h   
+C:\Users\relja\.stm32cubemx\network_output\network_data_params.c   
+C:\Users\relja\.stm32cubemx\network_output\network_data.h          
+C:\Users\relja\.stm32cubemx\network_output\network_data.c          
+C:\Users\relja\.stm32cubemx\network_output\network_config.h        
+C:\Users\relja\.stm32cubemx\network_output\network.h               
+C:\Users\relja\.stm32cubemx\network_output\network.c               

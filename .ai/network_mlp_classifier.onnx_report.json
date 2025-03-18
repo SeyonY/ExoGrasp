@@ -1,7 +1,7 @@
 {
     "_allocate_inputs": 4,
     "_allocate_outputs": 4,
-    "cli_parameters": "generate --target stm32h7 --name network -m C:/Users/Daniel/Documents/ExoGrasp/ExoGrasp/mlp_classifier.onnx --compression none --verbosity 1 --workspace C:/Users/Daniel/AppData/Local/Temp/mxAI_workspace2534504939716009782330689077914714 --output C:/Users/Daniel/.stm32cubemx/network_output",
+    "cli_parameters": "generate --target stm32h7 --name network -m D:/GitHub/ExoGrasp/mlp_classifier.onnx --compression none --verbosity 1 --workspace C:/Users/relja/AppData/Local/Temp/mxAI_workspace31979291784680015731446737116915735 --output C:/Users/relja/.stm32cubemx/network_output",
     "cli_version": {
         "extra": "20049",
         "major": 2,
@@ -11,7 +11,7 @@
     "cli_version_str": "2.0.0-20049",
     "code_size": 0,
     "compression": [],
-    "date_time": "2025-03-09T15:49:05-0400",
+    "date_time": "2025-03-18T12:52:35-0400",
     "error": 0,
     "error_str": [],
     "exec_cmd": "generate",
@@ -590,7 +590,7 @@
         }
     ],
     "model_files": [
-        "C:\\Users\\Daniel\\Documents\\ExoGrasp\\ExoGrasp\\mlp_classifier.onnx"
+        "D:\\GitHub\\ExoGrasp\\mlp_classifier.onnx"
     ],
     "model_n_params": 9990,
     "model_name": "mlp_classifier",

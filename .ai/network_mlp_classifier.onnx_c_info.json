@@ -634,44 +634,44 @@
   ],
   "environment": {
     "generated_model": {
-      "generated_time": "2025-03-09T15:49:05-0400",
+      "generated_time": "2025-03-18T12:52:35-0400",
       "model_files": [
         {
           "name": "network_data_params.h",
-          "signature": "0x16258b7f5f0963704e1081feaaf65fda"
+          "signature": "0xcf7b1e7c003eee9a2a664595a0488e98"
         },
         {
           "name": "network_data_params.c",
-          "signature": "0x5f53ef374166fc3676cc58b94152a13d"
+          "signature": "0xf9859466904cbd4998f91e631875e1f7"
         },
         {
           "name": "network_data.h",
-          "signature": "0x5279081fa799a27eff24b9eb8d1a2be1"
+          "signature": "0x28e6c0b89eb4c21122b832cc7b67026d"
         },
         {
           "name": "network_data.c",
-          "signature": "0xef3febaee29eef3daf32fe6bf2777cfe"
+          "signature": "0x0a5ae654d5a44478c6e969c656dc1bba"
         },
         {
           "name": "network_config.h",
-          "signature": "0x705d40dc8fc9edbc5f9c48b067214698"
+          "signature": "0xbce85a4ea395068a0348394062d6c19e"
         },
         {
           "name": "network.h",
-          "signature": "0xdba53dc131cbcaef25da77c16ca835cc"
+          "signature": "0xbabe217c391b8d1350505bb36050badd"
         },
         {
           "name": "network.c",
-          "signature": "0xddaadd5c1ac3c3f4808b3588890e876f"
+          "signature": "0x6b798b587dca11135c07b3f0d0f0ab19"
         }
       ],
       "name": "network"
     },
-    "network_signature": "0x2215eba4d4f6cb29",
+    "network_signature": "0x02f4609e03af6c10",
     "test_name": "",
     "tools": [
       {
-        "arguments": "generate --target stm32h7 --name network -m C:/Users/Daniel/Documents/ExoGrasp/ExoGrasp/mlp_classifier.onnx --compression none --verbosity 1 --workspace C:/Users/Daniel/AppData/Local/Temp/mxAI_workspace2534504939716009782330689077914714 --output C:/Users/Daniel/.stm32cubemx/network_output",
+        "arguments": "generate --target stm32h7 --name network -m D:/GitHub/ExoGrasp/mlp_classifier.onnx --compression none --verbosity 1 --workspace C:/Users/relja/AppData/Local/Temp/mxAI_workspace31979291784680015731446737116915735 --output C:/Users/relja/.stm32cubemx/network_output",
         "environment": [
           "STATS_TYPE=X-CUBE-AI"
         ],
@@ -1249,10 +1249,10 @@
       0,
       0
     ],
-    "kernel_flash": 32682,
+    "kernel_flash": 32680,
     "kernel_ram": 3488,
     "series": "stm32h7",
-    "toolchain": "arm-none-eabi-gcc (GNU Tools for STM32 13.3.rel1.20240926-1715) 13.3.1 20240614",
+    "toolchain": "arm-none-eabi-gcc (GNU Tools for STM32 12.3.rel1.20240926-1715) 12.3.1 20230626",
     "toolchain_flash": 1186,
     "toolchain_ram": 0,
     "weights": 39956

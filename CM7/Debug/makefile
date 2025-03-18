@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (13.3.rel1)
+# Toolchain: GNU Tools for STM32 (12.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -9,6 +9,7 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include X-CUBE-AI/App/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/subdir.mk
 -include Drivers/STM32H7xx_HAL_Driver/subdir.mk
 -include Drivers/BSP/STM32H7xx_Nucleo/subdir.mk
@@ -63,8 +64,8 @@ all: main-build
 main-build: ExoGrasp_CM7.elf secondary-outputs
 
 # Tool invocations
-ExoGrasp_CM7.elf ExoGrasp_CM7.map: $(OBJS) $(USER_OBJS) C:\Users\Daniel\Documents\ExoGrasp\ExoGrasp\CM7\STM32H755ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "ExoGrasp_CM7.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\Daniel\Documents\ExoGrasp\ExoGrasp\CM7\STM32H755ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ExoGrasp_CM7.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+ExoGrasp_CM7.elf ExoGrasp_CM7.map: $(OBJS) $(USER_OBJS) D:\GitHub\ExoGrasp\CM7\STM32H755ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "ExoGrasp_CM7.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"D:\GitHub\ExoGrasp\CM7\STM32H755ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ExoGrasp_CM7.map" -Wl,--gc-sections -static -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

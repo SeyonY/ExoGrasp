@@ -1,5 +1,5 @@
 Middlewares/Third_Party/FreeRTOS/port.o: \
- C:/Users/Daniel/Documents/ExoGrasp/ExoGrasp/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
+ D:/GitHub/ExoGrasp/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
  ../../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  ../../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \

@@ -79,7 +79,7 @@ const osThreadAttr_t predictionTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
-volatile uint16_t adc_buffer[TOTAL_SAMPLES]; // Circular buffer for ADC data
+volatile uint16_t adc_buffer[400]; // Circular buffer for ADC data
 volatile uint16_t currentBufferIndex = 0;
 volatile uint16_t sensor_averages[NUM_ADC_CHANNELS];
 char msg[128];
